@@ -1,0 +1,61 @@
+// -- CAMERA, LIGHT, AND SCENE FOR RENDER 3 --
+
+        //camera for scene 3 temple (it have the correct orientation and position)
+        Vector3D cameraPos = new Vector3D(0, 0.45, 2.2);
+        Camera camera = new Camera(cameraPos, 50.0, width, height);
+
+        // -- BUILD SCENE --
+
+        Scene scene = new Scene(0.1, 200.0);
+        scene.setCamera(camera);
+
+        //FRONT LIGHT
+        scene.addLight(new DirectionalLight(
+                new Vector3D(0, 0.82, 0.5), new Color(255, 255, 255), 0.8));
+        //LEFT-front LIGHT (ruto)
+        scene.addLight(new DirectionalLight(          //z 0.8 (also good option)
+                new Vector3D(0.7, 0.82, 0.7), new Color(255, 255, 255), 0.6));
+        //RIGHT-front LIGHT (darunia)
+        scene.addLight(new DirectionalLight(
+                new Vector3D(0.53, 0.82, 0.7), new Color(227, 103, 103), 0.2));
+        //LEFT LIGHT (Impa)
+        scene.addLight(new PointLight(
+                new Vector3D(-0.5, 0.85, 1.4), new Color(189, 61, 187), 0.55));
+        //LEFT LIGHT (Impa)
+        scene.addLight(new PointLight(
+                new Vector3D(0.7, 0.85, 1.6), new Color(73, 156, 211), 0.55));
+
+
+        // -- OBJECTS --
+	List<Triangle> knight = OBJ.read("obj/scene3/knight2.obj", "mtl/scene3/knight.mtl", 1.0);
+        scene.addMesh(knight, new Vector3D(-0.28, 0.25, 1.25), 1.2, TypicalMaterials.KNIGHT); //IRON
+
+        List<Triangle> water = OBJ.read("obj/scene3/water.obj", "mtl/scene3/water.mtl", 1.0);
+        scene.addMesh(water, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.WATER_MC);
+
+        List<Triangle> grass = OBJ.read("obj/scene3/grass.obj", "mtl/scene3/grass.mtl", 1.0);
+        scene.addMesh(grass, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.LEAF);
+
+        List<Triangle> pilars = OBJ.read("obj/scene3/pilars.obj", "mtl/scene3/pilars.mtl", 1.0);
+        scene.addMesh(pilars, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.STONE);
+
+        List<Triangle> pilars2 = OBJ.read("obj/scene3/pilars2.obj", "mtl/scene3/pilars2.mtl", 1.0);
+        scene.addMesh(pilars2, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.STONE);
+
+        List<Triangle> stars = OBJ.read("obj/scene3/stars.obj", "mtl/scene3/stars.mtl", 1.0);
+        scene.addMesh(stars, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.RUBY);
+
+        List<Triangle> tree = OBJ.read("obj/scene3/tree.obj", "mtl/scene3/tree.mtl", 1.0);
+        scene.addMesh(tree, new Vector3D(-0.3, 0.25, 1.2), 1.2, TypicalMaterials.CONCRETE);
+
+        List<Triangle> statue = OBJ.read("obj/scene3/statue.obj", "mtl/scene3/statue.mtl", 1.0);
+        scene.addMesh(statue, new Vector3D(0.1, 0.245, 1.2), 1.2, TypicalMaterials.STONE); //CONCRETE //MARBLE_OLD //STONE
+
+        List<Triangle> colors = OBJ.read("obj/scene3/colors.obj", "mtl/scene3/colors.mtl", 1.0);
+        scene.addMesh(colors, new Vector3D(0.2, 0.25, 1.2), 1.2, TypicalMaterials.PLASTIC);
+
+        List<Triangle> star2 = OBJ.read("obj/scene3/star2.obj", "mtl/scene3/star2.mtl", 1.0);
+        scene.addMesh(star2, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.GLASS);
+
+        List<Triangle> fountain = OBJ.read("obj/scene3/fountain.obj", "mtl/scene3/fountain.mtl", 1.0);
+        scene.addMesh(fountain, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.GLASS_FROSTED); //GLASS_FROSTED //GLASS_VITRAUX

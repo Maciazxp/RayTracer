@@ -1,0 +1,19 @@
+# Blender 5.1.2 MTL File: 'temple.blend'
+# www.blender.org
+
+newmtl Shield
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd textures/scene1/Shield_BaseColor.png
+map_Pm textures/scene1/Shield_Metallic.png
+map_Pr textures/scene1/Shield_Roughness.png
+map_Bump -bm 1.000000 textures/scene1/Shield_Normal.png
+

@@ -1,0 +1,223 @@
+/**
+ * TypicalMaterials — ready-to-use BlinnPhongMaterial presets.
+ *
+ * Constructor order: (ambient, diffuse, specular, shininess, transparency, reflectivity, ior)
+ *
+ * IOR reference values (real-world):
+ *   Air=1.00  Ice=1.31  Water=1.33  Glass=1.50  Emerald=1.57
+ *   Ruby=1.76  Sapphire=1.77  Diamond=2.42
+ *
+ * Usage:
+ *   scene.addMesh(mesh, new Vector3D(0,0,0), 3.0, TypicalMaterials.GLASS);
+ */
+public class TypicalMaterials {
+
+    // ── SPECIAL ──────────────────────────────────────────────────────────────────
+
+    public static final BlinnPhongMaterial MIRROR = new BlinnPhongMaterial(
+            0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0);
+
+    // ── METALS ───────────────────────────────────────────────────────────────────
+
+    public static final BlinnPhongMaterial GOLD = new BlinnPhongMaterial(
+            0.10, 0.50, 0.90, 64.0, 0.0, 0.50, 1.0);
+
+    public static final BlinnPhongMaterial SILVER = new BlinnPhongMaterial(
+            0.10, 0.50, 0.95, 96.0, 0.0, 0.90, 1.0);
+
+    public static final BlinnPhongMaterial BRONZE = new BlinnPhongMaterial(
+            0.10, 0.50, 0.80, 64.0, 0.0, 0.60, 1.0);
+
+    public static final BlinnPhongMaterial SHINY_METAL = new BlinnPhongMaterial(
+            0.10, 0.30, 1.00, 256.0, 0.0, 0.90, 1.0);
+
+    public static final BlinnPhongMaterial IRON = new BlinnPhongMaterial(
+            0.10, 0.40, 0.70, 48.0, 0.0, 0.40, 1.0);
+
+    //public static final BlinnPhongMaterial IRONS = new BlinnPhongMaterial(
+    //      0.80, 0.90, 0.70, 48.0, 0.0, 0.40, 1.0);
+
+    public static final BlinnPhongMaterial IRONS = new BlinnPhongMaterial(
+            0.75, 0.90, 0.70, 10.0, 0.0, 0.40, 1.0);
+
+    public static final BlinnPhongMaterial KNIGHT = new BlinnPhongMaterial(
+            0.02, 0.01, 0.50, 10.0, 0.0, 0.05, 1.0);
+
+    // ── PLASTICS ─────────────────────────────────────────────────────────────────
+
+    public static final BlinnPhongMaterial PLASTIC = new BlinnPhongMaterial(
+            1, 0.60, 0.80, 10.0, 0.0, 0.0, 1.0);
+
+    public static final BlinnPhongMaterial RUBBER = new BlinnPhongMaterial(
+            0.02, 0.01, 0.40, 10.0, 0.0, 0.05, 1.0);
+
+    // ── STONE & CONCRETE ─────────────────────────────────────────────────────────
+
+    public static final BlinnPhongMaterial MARBLE = new BlinnPhongMaterial(
+            0.25, 0.40, 0.30, 10.0, 0.0, 0.30, 1.0);
+
+    public static final BlinnPhongMaterial MARBLE_OLD = new BlinnPhongMaterial(
+            0.35, 0.20, 0.10, 5.0, 0.0, 0.20, 1.0);
+
+    public static final BlinnPhongMaterial CONCRETE = new BlinnPhongMaterial(
+            0.60, 0.10, 0.05, 5.0, 0.0, 0.02, 1.0);
+
+    public static final BlinnPhongMaterial STONE = new BlinnPhongMaterial(
+            0.40, 0.35, 0.10, 8.0, 0.0, 0.05, 1.0);
+
+    public static final BlinnPhongMaterial STONET = new BlinnPhongMaterial(
+            0.20, 0.35, 0.10, 8.0, 0.0, 0.05, 1.0);
+
+    // ── WOOD ─────────────────────────────────────────────────────────────────────
+
+
+    public static final BlinnPhongMaterial WOOD = new BlinnPhongMaterial(
+            0.20, 0.50, 0.10, 10.0, 0.0, 0.03, 1.0);
+
+    public static final BlinnPhongMaterial DARK_WOOD = new BlinnPhongMaterial(
+            0.20, 0.50, 0.10, 10.0, 0.0, 0.10, 1.0);
+
+    // ── FABRIC & CLOTH ───────────────────────────────────────────────────────────
+
+    public static final BlinnPhongMaterial CLOTH = new BlinnPhongMaterial(
+            0.30, 0.30, 0.10, 5.0, 0.0, 0.05, 1.0);
+
+    public static final BlinnPhongMaterial SILK = new BlinnPhongMaterial(
+            0.25, 0.50, 0.60, 32.0, 0.0, 0.20, 1.0);
+
+    // ── LEATHER ──────────────────────────────────────────────────────────────────
+
+    public static final BlinnPhongMaterial LEATHER = new BlinnPhongMaterial(
+            0.50, 0.30, 0.25, 15.0, 0.0, 0.08, 1.0);
+
+    // ── GEMS (transparent, high IOR) ─────────────────────────────────────────────
+
+    public static final BlinnPhongMaterial EMERALD = new BlinnPhongMaterial(
+            0.05, 0.10, 1.00, 256.0, 0.7, 0.30, 1.57);
+
+    public static final BlinnPhongMaterial RUBY = new BlinnPhongMaterial(
+            0.05, 0.10, 1.00, 256.0, 0.6, 0.30, 1.76);
+
+    public static final BlinnPhongMaterial SAPPHIRE = new BlinnPhongMaterial(
+            0.05, 0.10, 1.00, 256.0, 0.6, 0.30, 1.77);
+
+    public static final BlinnPhongMaterial DIAMOND = new BlinnPhongMaterial(
+            0.02, 0.05, 1.00, 512.0, 0.8, 0.20, 2.42);
+
+    public static final BlinnPhongMaterial AMETHYST = new BlinnPhongMaterial(
+            0.05, 0.10, 1.00, 256.0, 0.6, 0.30, 1.54);
+
+    // ── GLASS ────────────────────────────────────────────────────────────────────
+
+    public static final BlinnPhongMaterial GLASS = new BlinnPhongMaterial(
+            0.02, 0.05, 1.00, 128.0, 0.9, 0.01, 1.50);
+
+    public static final BlinnPhongMaterial GLASS_FROSTED = new BlinnPhongMaterial(
+            0.20, 0.40, 0.60, 32.0, 0.7, 0.20, 1.50);
+
+    public static final BlinnPhongMaterial GLASS_TINTED = new BlinnPhongMaterial(
+            0.05, 0.10, 1.00, 128.0, 0.8, 0.30, 1.50);
+
+
+    public static final BlinnPhongMaterial GLASS_VITRAUX = new BlinnPhongMaterial(
+            0.02, 0.90, 0.03, 2.0, 0.6, 0.05, 1.50);
+
+    // ── WATER & ICE ──────────────────────────────────────────────────────────────
+
+    public static final BlinnPhongMaterial WATER = new BlinnPhongMaterial(
+            0.02, 0.10, 0.80, 64.0, 0.8, 0.10, 1.33);
+
+    public static final BlinnPhongMaterial ICE = new BlinnPhongMaterial(
+            0.10, 0.20, 0.70, 64.0, 0.7, 0.20, 1.31);
+
+    // ── ORGANIC / NATURE ─────────────────────────────────────────────────────────
+
+    public static final BlinnPhongMaterial LEAF = new BlinnPhongMaterial(
+            0.20, 0.50, 0.20, 15.0, 0.1, 0.10, 1.0);
+
+    public static final BlinnPhongMaterial SAND = new BlinnPhongMaterial(
+            0.25, 0.40, 0.10, 5.0, 0.0, 0.05, 1.0);
+
+    // ── PAINT ────────────────────────────────────────────────────────────────────
+
+    public static final BlinnPhongMaterial PAINT_GLOSSY = new BlinnPhongMaterial(
+            0.40, 0.50, 0.60, 30.0, 0.0, 0.20, 1.0);
+
+    public static final BlinnPhongMaterial PAINT_MATTE = new BlinnPhongMaterial(
+            0.55, 0.20, 0.10, 8.0, 0.0, 0.05, 1.0);
+
+    public static final BlinnPhongMaterial PAINT_SATIN = new BlinnPhongMaterial(
+            0.50, 0.35, 0.30, 20.0, 0.0, 0.10, 1.0);
+
+
+    /**
+     * MINECRAFT MATERIALS
+     */
+
+    public static final BlinnPhongMaterial DIAMOND_BLOCK = new BlinnPhongMaterial(
+            0.3,
+            1,
+            0.95,
+            256.0,
+            0.0,
+            0.6,
+            1.0);
+
+    public static final BlinnPhongMaterial DIAMOND_INGOT = new BlinnPhongMaterial(
+            0.5,   // ambient
+            0.8,   // diffuse
+            1.00,   // specular
+            512.0,  // shininess
+            0.6,   // transparency
+            0,   // reflectivity
+            2.42);
+
+    public static final BlinnPhongMaterial DIAMOND_SWORD = new BlinnPhongMaterial(
+            0.5,
+            0.65,
+            1.00,
+            384.0,
+            0.20,
+            0.50,
+            2.42);
+
+    public static final BlinnPhongMaterial GOLD_INGOT = new BlinnPhongMaterial(
+            1,
+            0.90,
+            0.95,
+            160.0,
+            0.0,
+            0.64,
+            1.0);
+
+
+    public static final BlinnPhongMaterial COPPER_OXIDIZED = new BlinnPhongMaterial(
+            0.25,
+            0.60,
+            0.20,
+            8.0,
+            0.0,
+            0.2,
+            1.0);
+
+    public static final BlinnPhongMaterial WOOD_CHEST = new BlinnPhongMaterial(
+            0.18,
+            0.78,
+            0.20,
+            12.0,
+            0.0,
+            0.05,
+            1.0);
+
+
+    public static final BlinnPhongMaterial WATER_MC = new BlinnPhongMaterial(
+            0.02,
+            0.20,
+            0.90,
+            96.0,
+            0.75,
+            0.3,
+            1.33);
+
+
+}

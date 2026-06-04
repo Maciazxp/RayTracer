@@ -1,0 +1,490 @@
+import javax.imageio.ImageIO;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+public class Raytracer {
+
+    // Maximum recursion depth for reflection AND refraction bounces combined.
+    // 2-3 is a good balance between quality and render time.
+    private static final int MAX_BOUNCES = 3;
+
+    public static void main(String[] args) {
+        int width  = 4096; //4096
+        int height = 2160; //2160
+
+        // -- CAMERAS --
+
+        //CAMERA FOR SCENE 1 TEMPLE (it have the correct orientation and position)
+        Vector3D cameraPos = new Vector3D(0, 0.40, 2);
+        Camera camera = new Camera(cameraPos, 45.0, width, height);
+
+        //CAMERA FOR SCENE 2 MINECRAFT
+        //Vector3D cameraPos = new Vector3D(0.7, 0.0, 1.9);
+        //Camera camera = new Camera(cameraPos, 55.0, width, height);
+
+        //CAMERA FOR SCENE 3
+        //Vector3D cameraPos = new Vector3D(0, 0.45, 2.2);
+        //Camera camera = new Camera(cameraPos, 50.0, width, height);
+
+
+        // -- BUILD SCENE --
+
+        Scene scene = new Scene(0.1, 200.0);
+        scene.setCamera(camera);
+
+        // -- LIGHTS --
+
+        //--SCENE 1 LIGHTS--
+
+        //FRONT LIGHT
+        scene.addLight(new PointLight(
+                new Vector3D(0, 0.82, 0.5), new Color(239, 232, 130), 0.27));
+        //LEFT-front LIGHT (ruto)
+        scene.addLight(new PointLight(          //z 0.8 (also good option)
+                new Vector3D(-0.53, 0.82, 0.7), new Color(99, 243, 243), 0.27));
+        //RIGHT-front LIGHT (darunia)
+        scene.addLight(new PointLight(
+                new Vector3D(0.53, 0.82, 0.7), new Color(236, 186, 119), 0.27));
+        //LEFT LIGHT (Impa)
+        scene.addLight(new PointLight(
+                new Vector3D(-0.4, 0.85, 1.4), new Color(189, 61, 187), 0.39));
+        //LEFT LIGHT (Impa)
+        scene.addLight(new PointLight(
+                new Vector3D(0.4, 0.85, 1.4), new Color(83, 175, 53), 0.39));
+
+
+        //--SCENE 2 LIGHTS--
+        /*
+        scene.addLight(new DirectionalLight(new Vector3D(0, 2, -7), new Color(149, 243, 113), 10));
+        scene.addLight(new PointLight(new Vector3D(0.2, 1, 1), new Color(255, 255, 255), 0.5));
+        scene.addLight(new PointLight(new Vector3D(0.2, 2, 2), new Color(246, 225, 119), 5));
+        */
+
+        //--SCENE 3 LIGHTS--
+        /*
+        scene.addLight(new DirectionalLight(
+                new Vector3D(0, 0.82, 0.5), new Color(255, 255, 255), 0.8));
+
+        scene.addLight(new DirectionalLight(          //z 0.8 (also good option)
+                new Vector3D(0.7, 0.82, 0.7), new Color(255, 255, 255), 0.6));
+
+        scene.addLight(new DirectionalLight(
+                new Vector3D(0.53, 0.82, 0.7), new Color(227, 103, 103), 0.2));
+
+        scene.addLight(new PointLight(
+                new Vector3D(-0.5, 0.85, 1.4), new Color(189, 61, 187), 0.55));
+
+        scene.addLight(new PointLight(
+                new Vector3D(0.7, 0.85, 1.6), new Color(73, 156, 211), 0.55));
+        */
+
+
+        // -- OBJECTS --
+
+        // -- SCENE 1 (TEMPLE) OBJECTS --
+
+        List<Triangle> pedestal = OBJ.read("obj/scene1/pedestal.obj", "mtl/scene1/pedestal.mtl", 1.0);
+        scene.addMesh(pedestal, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.STONE);
+
+        List<Triangle> sword = OBJ.read("obj/scene1/sword.obj", "mtl/scene1/sword.mtl", 1.0);
+        scene.addMesh(sword, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.IRONS);
+
+        List<Triangle> temple = OBJ.read("obj/scene1/temple.obj", "mtl/scene1/temple.mtl", 1.0);
+        scene.addMesh(temple, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.STONET);
+
+        List<Triangle> triforce = OBJ.read("obj/scene1/triforce.obj", "mtl/scene1/triforce.mtl", 1.0);
+        scene.addMesh(triforce, new Vector3D(0, 0.15, 1.4), 1.2, TypicalMaterials.GOLD);
+
+        List<Triangle> vitraux = OBJ.read("obj/scene1/vitraux.obj", "mtl/scene1/vitraux.mtl", 1.0);
+        scene.addMesh(vitraux, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.GLASS_VITRAUX);
+
+        List<Triangle> rupee = OBJ.read("obj/scene1/rupee.obj", "mtl/scene1/rupee.mtl", 1.0);
+        scene.addMesh(rupee, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.GLASS);
+
+        List<Triangle> shield = OBJ.read("obj/scene1/shield.obj", "mtl/scene1/shield.mtl", 1.0);
+        scene.addMesh(shield, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.IRON);
+
+
+
+        // -- SCENE 2 (MINECRAFT) OBJECTS --
+        /*
+        List<Triangle> house = OBJ.read("obj/scene2/house.obj", "mtl/scene2/house.mtl", 1.0);
+        scene.addMesh(house, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD);
+
+        List<Triangle> diamond = OBJ.read("obj/scene2/diamond.obj", "mtl/scene2/diamond.mtl", 1.0);
+        scene.addMesh(diamond, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.DIAMOND_BLOCK);
+
+        List<Triangle> cooper = OBJ.read("obj/scene2/cooper.obj", "mtl/scene2/cooper.mtl", 1.0);
+        scene.addMesh(cooper, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.COPPER_OXIDIZED);
+
+        List<Triangle> glass = OBJ.read("obj/scene2/glass.obj", "mtl/scene2/glass.mtl", 1.0);
+        scene.addMesh(glass, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.GLASS);
+
+        List<Triangle> grass = OBJ.read("obj/scene2/grass.obj", "mtl/scene2/grass.mtl", 1.0);
+        scene.addMesh(grass, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.PLASTIC);
+
+        List<Triangle> tree = OBJ.read("obj/scene2/tree.obj", "mtl/scene2/tree.mtl", 1.0);
+        scene.addMesh(tree, new Vector3D(0.3, 0, 1.2), 1, TypicalMaterials.PLASTIC);
+
+        List<Triangle> pig = OBJ.read("obj/scene2/pig.obj", "mtl/scene2/pig.mtl", 1.0);
+        scene.addMesh(pig, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.PLASTIC);
+
+        List<Triangle> picaxe = OBJ.read("obj/scene2/picaxe.obj", "mtl/scene2/picaxe.mtl", 1.0);
+        scene.addMesh(picaxe, new Vector3D(0.3, 0, 1.2), 1, TypicalMaterials.PLASTIC);
+
+        List<Triangle> wood_pilar = OBJ.read("obj/scene2/wood_pilar.obj", "mtl/scene2/wood_pilar.mtl", 1.0);
+        scene.addMesh(wood_pilar, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD);
+
+        List<Triangle> mirror_wood = OBJ.read("obj/scene2/mirror_wood.obj", "mtl/scene2/mirror_wood.mtl", 1.0);
+        scene.addMesh(mirror_wood, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD);
+
+        List<Triangle> mirror = OBJ.read("obj/scene2/mirror.obj", "mtl/scene2/mirror.mtl", 1.0);
+        scene.addMesh(mirror, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.MIRROR);
+
+        List<Triangle> bed = OBJ.read("obj/scene2/bed.obj", "mtl/scene2/bed.mtl", 1.0);
+        scene.addMesh(bed, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.LEATHER);
+
+        List<Triangle> sword = OBJ.read("obj/scene2/sword.obj", "mtl/scene2/sword.mtl", 1.0);
+        scene.addMesh(sword, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.DIAMOND_SWORD);
+
+        List<Triangle> diamond_ingot = OBJ.read("obj/scene2/diamond_ingot.obj", "mtl/scene2/diamond_ingot.mtl", 1.0);
+        scene.addMesh(diamond_ingot, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.DIAMOND_INGOT);
+
+        List<Triangle> chest1 = OBJ.read("obj/scene2/chest1obj.obj", "mtl/scene2/chest1obj.mtl", 1.0);
+        scene.addMesh(chest1, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD_CHEST);
+
+        List<Triangle> gold_ingot = OBJ.read("obj/scene2/gold.obj", "mtl/scene2/gold.mtl", 1.0);
+        scene.addMesh(gold_ingot, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.GOLD_INGOT);
+
+        List<Triangle> tools = OBJ.read("obj/scene2/tools.obj", "mtl/scene2/tools.mtl", 1.0);
+        scene.addMesh(tools, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD);
+
+        List<Triangle> door = OBJ.read("obj/scene2/door.obj", "mtl/scene2/door.mtl", 1.0);
+        scene.addMesh(door, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD_CHEST);
+
+        List<Triangle> double_chest = OBJ.read("obj/scene2/double_chest.obj", "mtl/scene2/double_chest.mtl", 1.0);
+        scene.addMesh(double_chest, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD_CHEST);
+
+        List<Triangle> glass_block = OBJ.read("obj/scene2/glass_block2.obj", Color.WHITE, 1.0);
+        scene.addMesh(glass_block, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.GLASS);
+
+        List<Triangle> steve = OBJ.read("obj/scene2/steve.obj", "mtl/scene2/steve.mtl", 1.0);
+        scene.addMesh(steve, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.CLOTH);
+
+        List<Triangle> supports = OBJ.read("obj/scene2/supports.obj", Color.CYAN, 1.0);
+        scene.addMesh(supports, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.IRON);
+
+        List<Triangle> diamond_sword = OBJ.read("obj/scene2/diamond_sword.obj", "mtl/scene2/diamond_sword.mtl", 1.0);
+        scene.addMesh(diamond_sword, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.DIAMOND_SWORD);
+
+        List<Triangle> fence = OBJ.read("obj/scene2/fence.obj", "mtl/scene2/fence.mtl", 1.0);
+        scene.addMesh(fence, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD_CHEST);
+         */
+
+        // -- SCENE 3 (knights dream) OBJECTS --
+        /*
+        List<Triangle> knight = OBJ.read("obj/scene3/knight2.obj", "mtl/scene3/knight.mtl", 1.0);
+        scene.addMesh(knight, new Vector3D(-0.28, 0.25, 1.25), 1.2, TypicalMaterials.KNIGHT); //IRON
+
+        List<Triangle> water = OBJ.read("obj/scene3/water.obj", "mtl/scene3/water.mtl", 1.0);
+        scene.addMesh(water, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.WATER_MC);
+
+        List<Triangle> grass = OBJ.read("obj/scene3/grass.obj", "mtl/scene3/grass.mtl", 1.0);
+        scene.addMesh(grass, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.LEAF);
+
+        List<Triangle> pilars = OBJ.read("obj/scene3/pilars.obj", "mtl/scene3/pilars.mtl", 1.0);
+        scene.addMesh(pilars, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.STONE);
+
+        List<Triangle> pilars2 = OBJ.read("obj/scene3/pilars2.obj", "mtl/scene3/pilars2.mtl", 1.0);
+        scene.addMesh(pilars2, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.STONE);
+
+        List<Triangle> stars = OBJ.read("obj/scene3/stars.obj", "mtl/scene3/stars.mtl", 1.0);
+        scene.addMesh(stars, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.RUBY);
+
+        List<Triangle> tree = OBJ.read("obj/scene3/tree.obj", "mtl/scene3/tree.mtl", 1.0);
+        scene.addMesh(tree, new Vector3D(-0.3, 0.25, 1.2), 1.2, TypicalMaterials.CONCRETE);
+
+        List<Triangle> statue = OBJ.read("obj/scene3/statue.obj", "mtl/scene3/statue.mtl", 1.0);
+        scene.addMesh(statue, new Vector3D(0.1, 0.245, 1.2), 1.2, TypicalMaterials.STONE); //CONCRETE //MARBLE_OLD //STONE
+
+        List<Triangle> colors = OBJ.read("obj/scene3/colors.obj", "mtl/scene3/colors.mtl", 1.0);
+        scene.addMesh(colors, new Vector3D(0.2, 0.25, 1.2), 1.2, TypicalMaterials.PLASTIC);
+
+        List<Triangle> star2 = OBJ.read("obj/scene3/star2.obj", "mtl/scene3/star2.mtl", 1.0);
+        scene.addMesh(star2, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.GLASS);
+
+        List<Triangle> fountain = OBJ.read("obj/scene3/fountain.obj", "mtl/scene3/fountain.mtl", 1.0);
+        scene.addMesh(fountain, new Vector3D(0, 0.25, 1.2), 1.2, TypicalMaterials.GLASS_FROSTED); //GLASS_FROSTED //GLASS_VITRAUX
+        */
+
+
+        // -- BUILD BVH --
+        scene.buildBVH();
+
+        // -- RENDER --
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Camera cam = scene.getCamera();
+        long start = System.currentTimeMillis();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Ray ray = cam.getRay(x, y, width, height);
+                Color color = traceRay(ray, scene, cam, MAX_BOUNCES, 1.0);
+                image.setRGB(x, y, color.getRGB());
+            }
+            if (y % 60 == 0)
+                System.out.printf("Progress: %.1f%%\n", y * 100.0 / height);
+        }
+
+        System.out.printf("Render complete in %.2f seconds\n",
+                (System.currentTimeMillis() - start) / 1000.0);
+
+        try {
+            ImageIO.write(image, "png", new File("output.png"));
+            System.out.println("Saved: output.png");
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+
+
+    // -----------------------------------------------------------------------------
+    // TRACE RAY — recursive entry point
+    //
+    // currentIor: the IOR of the medium the ray is currently traveling through.
+    //   Primary camera rays start in air (1.0).
+    //   When a ray enters a refractive object it carries that object's IOR.
+    //   When it exits back into air it returns to 1.0.
+    // -----------------------------------------------------------------------------
+    static Color traceRay(Ray ray, Scene scene, Camera camera,
+                           int bouncesLeft, double currentIor) {
+        Intersection hit = scene.rayCast(ray);
+        if (hit == null) return Color.WHITE;
+        return applyShading(hit, scene, camera, bouncesLeft, currentIor, ray.getDirection());
+    }
+
+    // -----------------------------------------------------------------------------
+    // APPLY SHADING — Blinn-Phong + normal map + reflection + refraction
+    //
+    // REFLECTION  (kr > 0):
+    //   R = I - 2*(I·N)*N
+    //   Contributes kr fraction of the final color.
+    //
+    // REFRACTION  (kt > 0):
+    //   Uses Snell's law:  n1 * sin(θ1) = n2 * sin(θ2)
+    //   Vector form (Möller):
+    //     cosI  = -dot(N, I)
+    //     sinT2 = (n1/n2)^2 * (1 - cosI^2)
+    //     if sinT2 > 1 → Total Internal Reflection (no refracted ray)
+    //     else T = (n1/n2)*I + (n1/n2*cosI - sqrt(1-sinT2))*N
+    //
+    //   Fresnel (Schlick approximation):
+    //     Tells us how much light reflects vs refracts depending on the view angle.
+    //     At grazing angles even glass reflects almost 100%.
+    //     R0 = ((n1-n2)/(n1+n2))^2
+    //     Fr = R0 + (1-R0)*(1-cosI)^5
+    //     effective kr = max(material kr, Fr)
+    //     effective kt = (1 - Fr) * material kt
+    //
+    //   Final blend:
+    //     color = (1 - kr - kt) * localColor
+    //           + kr            * reflectedColor
+    //           + kt            * refractedColor
+    // -----------------------------------------------------------------------------
+    static Color applyShading(Intersection intersect, Scene scene, Camera camera,
+                               int bouncesLeft, double currentIor, Vector3D incidentDir) {
+        Object3D obj = intersect.getObject();
+
+        // -- 1. SHADING NORMAL ----------------------------------------------------
+        Vector3D N = intersect.getNormal();
+
+        if (obj instanceof Triangle tri
+                && tri.hasMaterial() && tri.getMaterial().hasNormalMap()
+                && tri.hasUVs() && tri.hasTBN()) {
+            Vector3D tsN = tri.getMaterial().sampleNormal(intersect.getU(), intersect.getV());
+            Vector3D T = tri.getTangent();
+            T = Vector3D.normalize(Vector3D.sub(T, Vector3D.scalar(N, Vector3D.dot(N, T))));
+            Vector3D B = tri.getBitangent();
+            N = Vector3D.normalize(Vector3D.add(
+                    Vector3D.scalar(T, tsN.getX()),
+                    Vector3D.add(Vector3D.scalar(B, tsN.getY()),
+                            Vector3D.scalar(N, tsN.getZ()))));
+        }
+
+        // -- 2. BASE COLOR ---------------------------------------------------------
+        Color OC = obj.getColor();
+        if (obj instanceof Triangle tri
+                && tri.hasMaterial() && tri.getMaterial().hasDiffuseTexture()) {
+            OC = tri.getMaterial().sampleDiffuse(intersect.getU(), intersect.getV());
+        }
+
+        // -- 3. MATERIAL COEFFICIENTS ----------------------------------------------------
+        double ka, kd, ks, alpha, kr, kt, ior;
+        if (obj instanceof Triangle tri && tri.hasBPMaterial()) {
+            BlinnPhongMaterial bp = tri.getBPMaterial();
+            ka    = bp.getAmbient();
+            kd    = bp.getDiffuse();
+            ks    = bp.getSpecular();
+            alpha = bp.getShininess();
+            kr    = bp.getReflectivity();
+            kt    = bp.getTransparency();
+            ior   = bp.getIor();
+        } else {
+            ka = 0.05; kd = 1.0; ks = 0.5; alpha = 32.0;
+            kr = 0.0;  kt = 0.0; ior = 1.0;
+        }
+
+        // -- 4. DETERMINE GEOMETRY: entering or exiting the material? -------------
+        // If the ray hits the back face (N·I > 0) the ray is exiting the object.
+        // We flip N so it always opposes the incoming ray, and swap IOR accordingly.
+        boolean entering = Vector3D.dot(N, incidentDir) < 0;
+        Vector3D Ngeom   = entering ? N : Vector3D.scalar(N, -1.0);
+        double   n1      = entering ? currentIor : ior;
+        double   n2      = entering ? ior        : 1.0; // exits back into air
+
+        // -- 5. FRESNEL (Schlick approximation) ------------------------------------
+        // Computes how much light reflects vs transmits as a function of angle.
+        // Even transparent materials reflect more at grazing angles.
+        double cosI = -Vector3D.dot(Ngeom, incidentDir); // cosine of incidence angle
+        cosI = Math.max(0.0, Math.min(1.0, cosI));
+
+        double r0    = (n1 - n2) / (n1 + n2);
+        r0           = r0 * r0;
+        double fresnelKr = r0 + (1.0 - r0) * Math.pow(1.0 - cosI, 5.0);
+
+        // Blend Fresnel with material's explicit kr / kt
+        double effectiveKr = Math.max(kr, kt > 0 ? fresnelKr       : 0.0);
+        double effectiveKt = kt > 0           ? (1.0 - fresnelKr) * kt : 0.0;
+
+        // -- 6. LOCAL ILLUMINATION ----------------------------------------------------
+        double totalR = (OC.getRed()   / 255.0) * ka;
+        double totalG = (OC.getGreen() / 255.0) * ka;
+        double totalB = (OC.getBlue()  / 255.0) * ka;
+
+        // Only compute local lighting for opaque-ish surfaces
+        // (fully transparent surfaces still get highlights)
+        double localWeight = 1.0 - effectiveKt; // reduce diffuse contribution by transparency
+
+        for (Light light : scene.getLights()) {
+            Vector3D L = light.getDirectionToLight(intersect.getPosition());
+
+            Vector3D shadowOrigin = Vector3D.add(intersect.getPosition(),
+                    Vector3D.scalar(Ngeom, 0.001));
+            Ray shadowRay = new Ray(shadowOrigin, L);
+
+            double maxShadowDist = Double.MAX_VALUE;
+            if (light instanceof PointLight pl)
+                maxShadowDist = Vector3D.magnitude(
+                        Vector3D.sub(pl.getPosition(), intersect.getPosition()));
+
+            if (scene.isOccluded(shadowRay, intersect.getObject(), maxShadowDist))
+                continue;
+
+            double intensity = light.getIntensityAt(intersect.getPosition());
+            double nDotL     = Math.max(0.0, Vector3D.dot(Ngeom, L));
+            double diffuse   = kd * nDotL * intensity * localWeight;
+
+            double specular = 0.0;
+            if (nDotL > 0) {
+                Vector3D V = Vector3D.normalize(
+                        Vector3D.sub(camera.getPosition(), intersect.getPosition()));
+                Vector3D H = Vector3D.normalize(Vector3D.add(L, V));
+                specular = ks * Math.pow(Math.max(0.0, Vector3D.dot(Ngeom, H)), alpha) * intensity;
+            }
+
+            Color LC = light.getColor();
+            double lr = LC.getRed()   / 255.0;
+            double lg = LC.getGreen() / 255.0;
+            double lb = LC.getBlue()  / 255.0;
+
+            totalR += lr * (OC.getRed()   / 255.0) * diffuse + lr * specular;
+            totalG += lg * (OC.getGreen() / 255.0) * diffuse + lg * specular;
+            totalB += lb * (OC.getBlue()  / 255.0) * diffuse + lb * specular;
+        }
+
+        if (bouncesLeft <= 0) {
+            // No more bounces — return only local color
+            int r = (int) Math.min(255, totalR * 255);
+            int g = (int) Math.min(255, totalG * 255);
+            int b = (int) Math.min(255, totalB * 255);
+            return new Color(r, g, b);
+        }
+
+        // -- 7. REFLECTION RAY ----------------------------------------------------
+        double reflR = 0, reflG = 0, reflB = 0;
+        if (effectiveKr > 0.001) {
+            double iDotN = Vector3D.dot(incidentDir, Ngeom);
+            Vector3D reflectDir = Vector3D.normalize(
+                    Vector3D.sub(incidentDir, Vector3D.scalar(Ngeom, 2.0 * iDotN)));
+            Vector3D reflectOrigin = Vector3D.add(
+                    intersect.getPosition(), Vector3D.scalar(Ngeom, 0.001));
+
+            Ray reflectRay = new Ray(reflectOrigin, reflectDir);
+            Color rc = traceRay(reflectRay, scene, camera, bouncesLeft - 1, currentIor);
+            reflR = rc.getRed()   / 255.0;
+            reflG = rc.getGreen() / 255.0;
+            reflB = rc.getBlue()  / 255.0;
+        }
+
+        // --  8. REFRACTION RAY (Snell's Law) -----------------------------------------
+        double refrR = 0, refrG = 0, refrB = 0;
+        if (effectiveKt > 0.001) {
+            double ratio   = n1 / n2;
+            double sinT2   = ratio * ratio * (1.0 - cosI * cosI);
+
+            if (sinT2 <= 1.0) {
+                // No total internal reflection — compute refracted direction
+                // T = ratio*I + (ratio*cosI - sqrt(1 - sinT2))*N
+                double cosT = Math.sqrt(1.0 - sinT2);
+                Vector3D refractDir = Vector3D.normalize(Vector3D.add(
+                        Vector3D.scalar(incidentDir, ratio),
+                        Vector3D.scalar(Ngeom, ratio * cosI - cosT)));
+
+                // Offset origin slightly AGAINST Ngeom (into the object)
+                Vector3D refractOrigin = Vector3D.add(
+                        intersect.getPosition(), Vector3D.scalar(Ngeom, -0.001));
+
+                Ray refractRay = new Ray(refractOrigin, refractDir);
+
+                // Pass n2 as the new medium IOR for the transmitted ray
+                Color rc = traceRay(refractRay, scene, camera, bouncesLeft - 1, n2);
+                refrR = rc.getRed()   / 255.0;
+                refrG = rc.getGreen() / 255.0;
+                refrB = rc.getBlue()  / 255.0;
+
+                // Tint refracted light by the object's diffuse color (like colored glass)
+                refrR *= (OC.getRed()   / 255.0) * 0.5 + 0.5;
+                refrG *= (OC.getGreen() / 255.0) * 0.5 + 0.5;
+                refrB *= (OC.getBlue()  / 255.0) * 0.5 + 0.5;
+
+            } else {
+                // Total Internal Reflection — treat as full reflection
+                effectiveKr = Math.max(effectiveKr, effectiveKt);
+                effectiveKt = 0.0;
+            }
+        }
+
+        // -- 9. BLEND local + reflection + refraction ------------------------------
+        // The three contributions must sum to ≤ 1 to conserve energy.
+        // local color fills whatever is left after kr and kt.
+        double localFraction = Math.max(0.0, 1.0 - effectiveKr - effectiveKt);
+
+        totalR = totalR * localFraction + reflR * effectiveKr + refrR * effectiveKt;
+        totalG = totalG * localFraction + reflG * effectiveKr + refrG * effectiveKt;
+        totalB = totalB * localFraction + reflB * effectiveKr + refrB * effectiveKt;
+
+        // -- 10. CLAMP AND RETURN ----------------------------------------------------
+        int r = (int) Math.min(255, totalR * 255);
+        int g = (int) Math.min(255, totalG * 255);
+        int b = (int) Math.min(255, totalB * 255);
+        return new Color(r, g, b);
+    }
+
+    // Backwards-compatible signature (no IOR, no incident direction)
+    static Color applyShading(Intersection intersect, Scene scene, Camera camera) {
+        Vector3D inc = Vector3D.normalize(
+                Vector3D.sub(intersect.getPosition(), camera.getPosition()));
+        return applyShading(intersect, scene, camera, 0, 1.0, inc);
+    }
+}

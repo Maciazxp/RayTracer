@@ -1,0 +1,88 @@
+// -- CAMERA AND LIGHTS --
+
+        Vector3D cameraPos = new Vector3D(0.7, 0.0, 1.9);
+        Camera camera = new Camera(cameraPos, 55.0, width, height);
+
+        Scene scene = new Scene(0.1, 200.0);
+        scene.setCamera(camera);
+
+        // -- LIGHTS --
+        scene.addLight(new DirectionalLight(new Vector3D(0, 2, -7), new Color(149, 243, 113), 10));
+        scene.addLight(new PointLight(new Vector3D(0.2, 1, 1), new Color(255, 255, 255), 0.5));
+        scene.addLight(new PointLight(new Vector3D(0.2, 2, 2), new Color(246, 225, 119), 5));
+
+
+// -- OBJ --
+
+
+        List<Triangle> house = OBJ.read("obj/scene2/house.obj", "mtl/scene2/house.mtl", 1.0);
+        scene.addMesh(house, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD);
+
+        List<Triangle> diamond = OBJ.read("obj/scene2/diamond.obj", "mtl/scene2/diamond.mtl", 1.0);
+        scene.addMesh(diamond, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.DIAMOND_BLOCK);
+
+        List<Triangle> cooper = OBJ.read("obj/scene2/cooper.obj", "mtl/scene2/cooper.mtl", 1.0);
+        scene.addMesh(cooper, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.COPPER_OXIDIZED);
+
+        List<Triangle> glass = OBJ.read("obj/scene2/glass.obj", "mtl/scene2/glass.mtl", 1.0);
+        scene.addMesh(glass, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.GLASS);
+
+        List<Triangle> grass = OBJ.read("obj/scene2/grass.obj", "mtl/scene2/grass.mtl", 1.0);
+        scene.addMesh(grass, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.PLASTIC);
+
+        List<Triangle> tree = OBJ.read("obj/scene2/tree.obj", "mtl/scene2/tree.mtl", 1.0);
+        scene.addMesh(tree, new Vector3D(0.3, 0, 1.2), 1, TypicalMaterials.PLASTIC);
+
+        List<Triangle> pig = OBJ.read("obj/scene2/pig.obj", "mtl/scene2/pig.mtl", 1.0);
+        scene.addMesh(pig, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.PLASTIC);
+
+        List<Triangle> picaxe = OBJ.read("obj/scene2/picaxe.obj", "mtl/scene2/picaxe.mtl", 1.0);
+        scene.addMesh(picaxe, new Vector3D(0.3, 0, 1.2), 1, TypicalMaterials.PLASTIC);
+
+        List<Triangle> wood_pilar = OBJ.read("obj/scene2/wood_pilar.obj", "mtl/scene2/wood_pilar.mtl", 1.0);
+        scene.addMesh(wood_pilar, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD);
+
+        List<Triangle> mirror_wood = OBJ.read("obj/scene2/mirror_wood.obj", "mtl/scene2/mirror_wood.mtl", 1.0);
+        scene.addMesh(mirror_wood, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD);
+
+        List<Triangle> mirror = OBJ.read("obj/scene2/mirror.obj", "mtl/scene2/mirror.mtl", 1.0);
+        scene.addMesh(mirror, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.MIRROR);
+
+        List<Triangle> bed = OBJ.read("obj/scene2/bed.obj", "mtl/scene2/bed.mtl", 1.0);
+        scene.addMesh(bed, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.LEATHER);
+
+        List<Triangle> sword = OBJ.read("obj/scene2/sword.obj", "mtl/scene2/sword.mtl", 1.0);
+        scene.addMesh(sword, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.DIAMOND_SWORD);
+
+        List<Triangle> diamond_ingot = OBJ.read("obj/scene2/diamond_ingot.obj", "mtl/scene2/diamond_ingot.mtl", 1.0);
+        scene.addMesh(diamond_ingot, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.DIAMOND_INGOT);
+
+        List<Triangle> chest1 = OBJ.read("obj/scene2/chest1obj.obj", "mtl/scene2/chest1obj.mtl", 1.0);
+        scene.addMesh(chest1, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD_CHEST);
+
+        List<Triangle> gold_ingot = OBJ.read("obj/scene2/gold.obj", "mtl/scene2/gold.mtl", 1.0);
+        scene.addMesh(gold_ingot, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.GOLD_INGOT);
+
+        List<Triangle> tools = OBJ.read("obj/scene2/tools.obj", "mtl/scene2/tools.mtl", 1.0);
+        scene.addMesh(tools, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD);
+
+        List<Triangle> door = OBJ.read("obj/scene2/door.obj", "mtl/scene2/door.mtl", 1.0);
+        scene.addMesh(door, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD_CHEST);
+
+        List<Triangle> double_chest = OBJ.read("obj/scene2/double_chest.obj", "mtl/scene2/double_chest.mtl", 1.0);
+        scene.addMesh(double_chest, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD_CHEST);
+
+        List<Triangle> glass_block = OBJ.read("obj/scene2/glass_block2.obj", Color.WHITE, 1.0);
+        scene.addMesh(glass_block, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.GLASS);
+
+        List<Triangle> steve = OBJ.read("obj/scene2/steve.obj", "mtl/scene2/steve.mtl", 1.0);
+        scene.addMesh(steve, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.CLOTH);
+
+        List<Triangle> supports = OBJ.read("obj/scene2/supports.obj", Color.CYAN, 1.0);
+        scene.addMesh(supports, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.IRON);
+
+        List<Triangle> diamond_sword = OBJ.read("obj/scene2/diamond_sword.obj", "mtl/scene2/diamond_sword.mtl", 1.0);
+        scene.addMesh(diamond_sword, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.DIAMOND_SWORD);
+
+        List<Triangle> fence = OBJ.read("obj/scene2/fence.obj", "mtl/scene2/fence.mtl", 1.0);
+        scene.addMesh(fence, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD_CHEST);

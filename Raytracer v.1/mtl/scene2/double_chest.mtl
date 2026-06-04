@@ -1,0 +1,17 @@
+# Blender 5.1.2 MTL File: 'temple.blend'
+# www.blender.org
+
+newmtl Chest-Double
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+Pr 1.000000
+Pm 0.177215
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd textures/scene2/chest2.jpeg

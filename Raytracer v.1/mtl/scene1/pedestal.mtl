@@ -1,0 +1,34 @@
+# Blender 5.1.2 MTL File: 'temple.blend'
+# www.blender.org
+
+newmtl PedestalTexture
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+Pm 0.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd textures/scene1/Pédéstal_Pédéstal_BaseColor.png
+map_Pr textures/scene1/Pédéstal_Pédéstal_Roughness.png
+map_Bump -bm 1.000000 textures/scene1/Pédéstal_Pédéstal_Normal.png
+
+newmtl SocleTexture
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+Pm 0.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd textures/scene1/Roche_Socle_BaseColor.png
+map_Pr textures/scene1/Roche_Socle_Roughness.png
+map_Bump -bm 1.000000 textures/scene1/Roche_Socle_Normal.png
