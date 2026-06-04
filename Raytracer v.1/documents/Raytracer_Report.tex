@@ -1,0 +1,1115 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\ifLuaTeX
+  \usepackage{luacolor}
+  \usepackage[soul]{lua-ul}
+\else
+  \usepackage{soul}
+\fi
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\textbf{Java Raytracer}
+
+Report
+
+\textbf{Multimedia \& Computer Graphics}
+
+Universidad Panamericana \textbar{} 2026
+
+Santiago Macias Fernandez
+
+\section{}\label{section}
+
+\section{}\label{section-1}
+
+\section{}\label{section-2}
+
+\section{}\label{section-3}
+
+\section{}\label{section-4}
+
+\section{}\label{section-5}
+
+\section{}\label{section-6}
+
+\section{}\label{section-7}
+
+\section{\texorpdfstring{\textbf{Introduction}}{Introduction}}\label{introduction}
+
+This project is basically a raytracer built from scratch in Java. A
+raytracer is a rendering technique that simulates how light actually
+works in the real world, instead of rasterizing polygons like a regular
+game engine does, it shoots rays from the camera into the scene and
+calculates exactly what each ray hits and how it bounces around.
+
+The result is that you get physically accurate shadows, reflections, and
+refractions kind of for free, because you\textquotesingle re actually
+simulating the physics of light. The downside is that
+it\textquotesingle s way slower than rasterization, but for images it
+gives much better results.
+
+This report walks through how the project evolved from version 0.1 to
+version 1.0, what was added in each stage, and what the important
+technical decisions were. The codebase ended up being about 20 Java
+files and can render complex 3D scenes with textures, normal maps,
+reflections, and refractions.
+
+\section{\texorpdfstring{\textbf{v0.1 ---
+Spheres}}{v0.1 --- Spheres}}\label{v0.1-spheres}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1923}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8077}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{v0.1}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Ray-Sphere Intersection}
+\end{minipage} \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Files changed}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Raytracer.java, Sphere.java, Vector3D.java, Ray.java, Camera.java,
+Scene.java, Object3D.java, Intersection.java
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+The very first version was just getting a single colored pixel on
+screen. Before anything else, the project needed a solid math
+foundation, which meant implementing Vector3D.java with all the
+operations that a raytracer needs: add, subtract, scalar multiply, dot
+product, cross product, magnitude, and normalize.
+
+\subsubsection{\texorpdfstring{\textbf{How ray casting
+works}}{How ray casting works}}\label{how-ray-casting-works}
+
+The core idea is simple: for every pixel on screen, shoot a ray from the
+camera position through that pixel into the 3D scene. If the ray hits an
+object, color the pixel. If it doesn\textquotesingle t, color it black
+(background).
+
+The Camera class converts a pixel coordinate (x, y) into a normalized
+ray direction. It uses the field-of-view angle and the aspect ratio to
+map screen pixels to directions in 3D space. The formula is:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+px = (2 * (x + 0.5) / width - 1) * aspectRatio * tan(fov/2)
+
+py = (1 - 2 * (y + 0.5) / height) * tan(fov/2)
+
+direction = normalize(px, py, -1) // -1 because camera looks towards -Z
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+For spheres, the intersection math is a quadratic equation. The ray is
+parameterized as P(t) = origin + t*direction, and you substitute that
+into the sphere equation (\textbar\textbar P -
+center\textbar\textbar\^{}2 = radius\^{}2) and solve for t. If t is
+positive, the sphere is in front of the camera. The smaller t is the
+closer intersection (front face of the sphere).
+
+\includegraphics[width=4.25521in,height=3.19141in]{./media/image4.png}
+
+\section{\texorpdfstring{\textbf{v0.2 --- Triangles and
+Clipping}}{v0.2 --- Triangles and Clipping}}\label{v0.2-triangles-and-clipping}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1923}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8077}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{v0.2}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Möller-Trumbore + Near/Far Clipping}
+\end{minipage} \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Files changed}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Triangle.java, Scene.java, Vector3D.java (cross product)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+This version added the Triangle class, which is the building block for
+all 3D models. Almost everything in 3D graphics is made of triangles,
+any mesh, any OBJ file, is just a collection of triangles.
+
+\subsubsection{\texorpdfstring{\textbf{Möller-Trumbore
+algorithm}}{Möller-Trumbore algorithm}}\label{muxf6ller-trumbore-algorithm}
+
+The algorithm to intersect a ray with a triangle is called
+Möller-Trumbore, and it\textquotesingle s the standard approach in
+raytracers because it\textquotesingle s efficient, it avoids computing
+the plane equation explicitly. The idea is:
+
+\begin{itemize}
+\item
+  Compute P = D × edge1 (cross product of ray direction and one edge)
+\item
+  The determinant = edge2 · P tells if the ray is parallel to the
+  triangle
+\item
+  Solve for barycentric coordinates u and v --- if either is outside
+  {[}0,1{]} the hit point is outside the triangle
+\item
+  Solve for t --- the distance along the ray to the intersection
+\end{itemize}
+
+Barycentric coordinates are important: they give you the position inside
+the triangle as a weighted combination of the three vertices. This
+becomes crucial later for interpolating normals and UV coordinates.
+
+\subsubsection{\texorpdfstring{\textbf{Clipping
+planes}}{Clipping planes}}\label{clipping-planes}
+
+Clipping was also added here: a nearClip (0.1) and farClip (100.0)
+define a valid range for intersections. Any hit with t \textless{}
+nearClip is behind or too close to the camera, and t \textgreater{}
+farClip is too far. This avoids rendering objects behind the camera and
+also prevents floating-point precision issues.
+
+\section{\texorpdfstring{\textbf{v0.3 --- OBJ File
+Reader}}{v0.3 --- OBJ File Reader}}\label{v0.3-obj-file-reader}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1923}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8077}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{v0.3}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Loading 3D Models from .obj Files}
+\end{minipage} \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Files changed}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+OBJ.java
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Having triangles is one thing, but you can\textquotesingle t build a
+whole scene by hand-coding every vertex. The OBJ format is a simple
+text-based format that Blender and most 3D tools export. Each line
+starts with a keyword: v for vertex, vn for normal, vt for texture
+coordinate, f for face.
+
+The OBJ reader parses each line and builds Triangle objects. Faces can
+be quads (4 vertices) or even n-gons, so the reader does fan
+triangulation, it takes the first vertex and connects it to every edge
+of the polygon, splitting it into triangles.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+// Fan triangulation for quads/ngons
+
+for (int i = 1; i \textless{} vIdx.length - 1; i++) \{
+
+v0 = vertices{[}vIdx{[}0{]}{]};
+
+v1 = vertices{[}vIdx{[}i{]}{]};
+
+v2 = vertices{[}vIdx{[}i+1{]}{]};
+
+triangles.add(new Triangle(v0, v1, v2, color));
+
+\}
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+A \textbf{scale} parameter was also added so models that are exported at
+weird sizes can be \textbf{scaled} down when loading. Many OBJ files
+have coordinates in the hundreds or thousands, so a scale of 0.01 brings
+them to a reasonable size.
+
+\includegraphics[width=5.10417in,height=3.82813in]{./media/image6.png}
+
+\section{\texorpdfstring{\textbf{v0.4 --- Flat
+Shading}}{v0.4 --- Flat Shading}}\label{v0.4-flat-shading}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1923}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8077}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{v0.4}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Lambert Diffuse Lighting}
+\end{minipage} \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Files changed}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Light.java, Raytracer.java (applyShading)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Up to this point everything was just solid flat colors and no lighting
+at all. Flat shading adds a basic diffuse light calculation using
+Lambert\textquotesingle s law: the brightness of a surface depends on
+how directly it faces the light source.
+
+The formula is: Diffuse = LC × OC × LI × max(0, N·L), where LC is the
+light color, OC is the object color, LI is the light intensity, N is the
+surface normal, and L is the direction toward the light. The dot product
+N·L gives a value from -1 to 1 --- negative values mean the face is
+pointing away from the light, so we clamp to 0.
+
+A Light class was created with color and intensity. The direction of the
+light determines which faces are lit and which are in shadow.
+
+\includegraphics[width=5.17361in,height=3.88021in]{./media/image1.png}
+
+\section{\texorpdfstring{\textbf{v0.5 --- Phong
+Shading}}{v0.5 --- Phong Shading}}\label{v0.5-phong-shading}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1923}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8077}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{v0.5}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Per-vertex Normal Interpolation + Specular}
+\end{minipage} \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Files changed}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Triangle.java, OBJ.java, Raytracer.java
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Flat shading gives a faceted look, each triangle is uniformly colored.
+Phong shading smooths this out by interpolating normals across the
+triangle surface. Instead of one normal per triangle, each vertex gets
+its own normal (read from vn in the OBJ file), and for any point inside
+the triangle the normal is interpolated using the barycentric
+coordinates from Möller-Trumbore.
+
+This makes curved surfaces look smooth even though
+they\textquotesingle re made of flat triangles. The specular highlight
+was also added using the reflection vector R = 2*(N·L)*N - L and the
+view vector V, the specular term is (R·V)\^{}shininess. Higher shininess
+makes the highlight smaller and sharper.
+
+\includegraphics[width=4.77083in,height=3.57813in]{./media/image7.png}
+
+\section{\texorpdfstring{\textbf{v0.6 --- Point Lights and Multiple
+Lights}}{v0.6 --- Point Lights and Multiple Lights}}\label{v0.6-point-lights-and-multiple-lights}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1923}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8077}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{v0.6}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Light Hierarchy + Attenuation}
+\end{minipage} \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Files changed}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Light.java, DirectionalLight.java, PointLight.java, Scene.java
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+The original light was a simple directional light, same direction
+everywhere, no falloff. Point lights are more realistic: they have a
+position in 3D space and their intensity decreases with distance squared
+(inverse square law, same as real physics).
+
+The Light class became abstract with two subclasses. DirectionalLight
+returns the same L direction for every point in the scene. PointLight
+calculates L dynamically as normalize(lightPos - intersectionPoint) and
+attenuates intensity as I / d\^{}2.
+
+Scene.java was updated to hold a list of lights so multiple lights could
+be added. The shading loop iterates over all lights and accumulates
+their contributions.
+
+\section{\texorpdfstring{\textbf{v0.7 --- Shadow
+Rays}}{v0.7 --- Shadow Rays}}\label{v0.7-shadow-rays}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1923}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8077}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{v0.7}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Hard Shadows via Occlusion Testing}
+\end{minipage} \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Files changed}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Scene.java (isOccluded), Raytracer.java
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+To calculate shadows, after finding an intersection the raytracer shoots
+a second ray (the shadow ray) from the hit point toward each light
+source. If this ray hits any other object before reaching the light,
+that point is in shadow and the light is skipped.
+
+\subsubsection{\texorpdfstring{\textbf{Shadow
+acne}}{Shadow acne}}\label{shadow-acne}
+
+A classic problem here is shadow acne, the shadow ray can intersect the
+same surface it\textquotesingle s coming from due to floating-point
+precision. The fix is to offset the shadow ray origin slightly along the
+normal by a small bias (0.001), so it doesn\textquotesingle t
+immediately re-intersect its own surface.
+
+For point lights, the shadow ray also needs a maximum distance, only
+objects between the surface and the light should cast shadows. Objects
+behind the light shouldn\textquotesingle t matter.
+
+\section{\texorpdfstring{\textbf{v0.75 --- Textures from MTL
+Files}}{v0.75 --- Textures from MTL Files}}\label{v0.75-textures-from-mtl-files}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1923}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8077}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{v0.75}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{UV Mapping + Diffuse Texture Sampling}
+\end{minipage} \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Files changed}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Material.java, MTL.java, Triangle.java, OBJ.java, Intersection.java,
+Raytracer.java
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+This was a big architectural step. The OBJ format has a companion .mtl
+file that defines materials --- including paths to texture images. The
+texture is a PNG or JPG that gets mapped onto the surface using UV
+coordinates.
+
+UV coordinates (vt lines in the OBJ) are 2D coordinates in {[}0,1{]}
+range that map each vertex to a position on the texture image. Just like
+normals, they get interpolated with barycentric coordinates for every
+pixel inside a triangle. Then sampleDiffuse(u, v) does a simple pixel
+lookup on the image.
+
+Intersection.java was updated to carry the interpolated u and v values.
+Material.java handles loading the image with ImageIO and sampling it.
+MTL.java parses the .mtl file and creates Material objects for each
+material name found.
+
+\includegraphics[width=5.29861in,height=3.97396in]{./media/image2.png}
+
+\section{\texorpdfstring{\textbf{v0.76 ---
+BVH}}{v0.76 --- BVH}}\label{v0.76-bvh}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1923}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8077}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{v0.76}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Bounding Volume Hierarchy}
+\end{minipage} \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Files changed}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+AABB.java, BVHNode.java, Scene.java
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Without any acceleration structure, every ray has to be tested against
+every single triangle in the scene. A scene with 100,000 triangles at
+1080p resolution means about 2 trillion intersection tests per frame,
+and it is completely impractical.
+
+The BVH (Bounding Volume Hierarchy) solves this by organizing objects
+into a tree. Each node has an AABB (axis-aligned bounding box) that
+contains all its children. If a ray misses the bounding box, the entire
+subtree is skipped.
+
+\subsubsection{\texorpdfstring{\textbf{Construction}}{Construction}}\label{construction}
+
+The tree is built by: computing the AABB of all objects, finding the
+longest axis, sorting objects by their centroid on that axis, splitting
+at the median, and recursing on each half. Leaves contain at most 8
+objects. This is O(n log n) and happens once before rendering.
+
+\subsubsection{\texorpdfstring{\textbf{AABB intersection (the slab
+method)}}{AABB intersection (the slab method)}}\label{aabb-intersection-the-slab-method}
+
+For each axis, compute when the ray enters (t1) and exits (t2) the pair
+of parallel planes. Track the latest entry and earliest exit across all
+three axes. If the latest entry is before the earliest exit, the ray hit
+the box. Pure arithmetic, no square roots.
+
+\section{\texorpdfstring{\textbf{v0.77 --- Normal Maps (Bump
+Maps)}}{v0.77 --- Normal Maps (Bump Maps)}}\label{v0.77-normal-maps-bump-maps}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1923}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8077}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{v0.77}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{TBN Matrix + Tangent-Space Normal Perturbation}
+\end{minipage} \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Files changed}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Material.java, MTL.java, Triangle.java, Raytracer.java
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Normal maps allow a low-polygon mesh to look like it has much more
+geometric detail --- things like brick grout, surface scratches, or skin
+pores --- without actually adding geometry. The trick is to store
+per-pixel normal directions in a texture and use them to perturb the
+shading normal.
+
+\subsubsection{\texorpdfstring{\textbf{The TBN
+matrix}}{The TBN matrix}}\label{the-tbn-matrix}
+
+The normal map stores vectors in tangent space --- a coordinate system
+local to each triangle where Z is the surface normal, X is the tangent
+(along U in UV space), and Y is the bitangent (along V in UV space). To
+use these in world space, a 3x3 TBN matrix is built from the tangent
+(T), bitangent (B), and normal (N) vectors.
+
+T and B are calculated from the UV differences and edge vectors of the
+triangle. This math is done once per triangle in the constructor:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+du1 = uv1{[}0{]}-uv0{[}0{]}; dv1 = uv1{[}1{]}-uv0{[}1{]};
+
+du2 = uv2{[}0{]}-uv0{[}0{]}; dv2 = uv2{[}1{]}-uv0{[}1{]};
+
+f = 1.0 / (du1*dv2 - du2*dv1);
+
+tangent = normalize(f * (dv2*edge1 - dv1*edge2));
+
+bitangent = normalize(f * (-du2*edge1 + du1*edge2));
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+At shading time, the RGB values from the normal map are decoded from
+{[}0,255{]} to {[}-1,1{]}, then transformed to world space: N\_world =
+tsN.x*T + tsN.y*B + tsN.z*N. Before this, T is re-orthogonalized against
+the Phong-interpolated normal using Gram-Schmidt to keep everything
+consistent.
+
+\includegraphics[width=6.5in,height=3.43056in]{./media/image12.png}
+
+\section{\texorpdfstring{\textbf{v0.8 ---
+Blinn-Phong}}{v0.8 --- Blinn-Phong}}\label{v0.8-blinn-phong}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1923}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8077}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{v0.8}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Hybrid Material Architecture}
+\end{minipage} \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Files changed}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+BlinnPhongMaterial.java, TypicalMaterials.java, Triangle.java,
+Scene.java, Raytracer.java
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Up to this point, light behavior (how shiny, how diffuse) was hardcoded
+in the shader. This version introduced a proper material system that
+separates two distinct concerns:
+
+\begin{itemize}
+\item
+  Material.java --- only holds textures from the MTL file (diffuse
+  texture, normal map)
+\item
+  BlinnPhongMaterial.java --- only holds light behavior coefficients
+  (ka, kd, ks, shininess, transparency, reflectivity, ior)
+\end{itemize}
+
+A Triangle can have both: its MTL Material provides the color and normal
+map, and a BlinnPhongMaterial is assigned when adding the mesh to the
+scene to control how it responds to light. This means you can load the
+same OBJ with different material behaviors without modifying the
+geometry.
+
+\subsubsection{\texorpdfstring{\textbf{Blinn vs Phong
+specular}}{Blinn vs Phong specular}}\label{blinn-vs-phong-specular}
+
+The specular calculation was upgraded from classic Phong to Blinn-Phong.
+Instead of computing the reflect vector R and doing dot(R, V), it
+computes a half-vector H = normalize(L + V) and does dot(N, H). This is
+slightly cheaper and avoids artifacts at grazing angles. The
+TypicalMaterials class provides preset materials like GOLD, SILVER,
+IRON, GLASS, MARBLE, DIAMOND with realistic coefficient values.
+
+\includegraphics[width=4.89063in,height=2.75098in]{./media/image10.png}
+
+\section{\texorpdfstring{\textbf{v0.9 --- Recursive
+Reflections}}{v0.9 --- Recursive Reflections}}\label{v0.9-recursive-reflections}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1923}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8077}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{v0.9}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Mirror Reflections with Bounce Limit}
+\end{minipage} \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Files changed}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Raytracer.java
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Reflections are what make raytracers look so much better than
+rasterizers. When a ray hits a reflective surface, instead of stopping,
+it spawns a new ray in the reflected direction and traces that
+recursively.
+
+The reflected direction is: R = I - 2*(I·N)*N, where I is the incident
+ray direction. A MAX\_BOUNCES constant (default 2-3) limits the
+recursion depth to avoid infinite bouncing between two mirrors.
+
+The final color blends the local shading with the reflected color:
+finalColor = (1-kr)*localColor + kr*reflectedColor. With kr=1.0 and no
+diffuse, you get a perfect mirror.
+
+\includegraphics[width=4.69271in,height=2.63965in]{./media/image8.png}\includegraphics[width=4.66146in,height=2.62207in]{./media/image5.png}
+
+\section{\texorpdfstring{\textbf{v1.0 --- Refraction with
+Snell\textquotesingle s Law and
+Fresnel}}{v1.0 --- Refraction with Snell\textquotesingle s Law and Fresnel}}\label{v1.0-refraction-with-snells-law-and-fresnel}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1923}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8077}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{v1.0}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Transparent Materials + IOR + Fresnel}
+\end{minipage} \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Files changed}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+BlinnPhongMaterial.java, TypicalMaterials.java, Raytracer.java
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+Refraction is what makes glass, water, and gems look like glass, water,
+and gems. When a ray enters a transparent material, it bends according
+to Snell\textquotesingle s Law: n1*sin(θ1) = n2*sin(θ2), where n1 and n2
+are the refractive indices (IOR) of the two materials.
+
+\subsubsection{\texorpdfstring{\textbf{IOR --- Index of
+Refraction}}{IOR --- Index of Refraction}}\label{ior-index-of-refraction}
+
+The IOR was added as a seventh parameter to BlinnPhongMaterial.
+Real-world values were used in TypicalMaterials: GLASS=1.50, WATER=1.33,
+DIAMOND=2.42, EMERALD=1.57. Higher IOR means more bending and more
+distortion.
+
+\subsubsection{\texorpdfstring{\textbf{Snell\textquotesingle s Law in
+vector
+form}}{Snell\textquotesingle s Law in vector form}}\label{snells-law-in-vector-form}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+// cosI = -dot(N, I) (angle of incidence)
+
+// ratio = n1/n2
+
+// sinT2 = ratio\^{}2 * (1 - cosI\^{}2)
+
+// if sinT2 \textgreater{} 1 → Total Internal Reflection (no refracted
+ray)
+
+cosT = sqrt(1 - sinT2);
+
+refractDir = ratio*I + (ratio*cosI - cosT)*N;
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+\subsubsection{\texorpdfstring{\textbf{Fresnel effect (Schlick
+approximation)}}{Fresnel effect (Schlick approximation)}}\label{fresnel-effect-schlick-approximation}
+
+Even transparent materials reflect more at grazing angles --- this is
+the Fresnel effect, and it\textquotesingle s why glass looks transparent
+from straight on but mirror-like from the side. The Schlick
+approximation computes this efficiently:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 0\tabcolsep) * \real{1.0000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+r0 = ((n1-n2)/(n1+n2))\^{}2;
+
+fresnelKr = r0 + (1 - r0) * (1 - cosI)\^{}5;
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\end{longtable}
+}
+
+The final color blend is: finalColor = localColor*(1-kr-kt) +
+reflectedColor*kr + refractedColor*kt. The three contributions are
+energy-conserving --- they sum to at most 1.
+
+Total Internal Reflection is also handled: when a ray inside a dense
+material hits the boundary at too steep an angle, sin\^{}2(T)
+\textgreater{} 1 and there is no refracted ray --- all light reflects
+back inside. This is what causes the characteristic sparkling in
+diamonds and gems.
+
+\includegraphics[width=5.30729in,height=3.00236in]{./media/image11.png}
+
+\section{\texorpdfstring{\textbf{Final
+Architecture}}{Final Architecture}}\label{final-architecture}
+
+After all iterations, the codebase is organized as follows:
+
+\subsubsection{\texorpdfstring{\textbf{Core
+math}}{Core math}}\label{core-math}
+
+\begin{itemize}
+\item
+  Vector3D.java --- all vector math (add, sub, dot, cross, normalize,
+  magnitude)
+\item
+  Ray.java --- origin + direction, with pre-computed inverse direction
+  for AABB
+\end{itemize}
+
+\subsubsection{\texorpdfstring{\textbf{Scene and
+acceleration}}{Scene and acceleration}}\label{scene-and-acceleration}
+
+\begin{itemize}
+\item
+  Scene.java --- holds objects, lights, camera, BVH. Main raycast and
+  shadow test entry points
+\item
+  AABB.java --- axis-aligned bounding box with slab-method ray
+  intersection
+\item
+  BVHNode.java --- binary tree of AABBs built from scene objects
+\end{itemize}
+
+\subsubsection{\texorpdfstring{\textbf{Geometry}}{Geometry}}\label{geometry}
+
+\begin{itemize}
+\item
+  Object3D.java --- abstract base class
+\item
+  Triangle.java --- Möller-Trumbore, Phong normals, UV interpolation,
+  TBN, BlinnPhongMaterial
+\item
+  Sphere.java --- analytic ray-sphere intersection
+\item
+  Plane.java --- infinite plane for floors and walls
+\end{itemize}
+
+\subsubsection{\texorpdfstring{\textbf{Materials and
+textures}}{Materials and textures}}\label{materials-and-textures}
+
+\begin{itemize}
+\item
+  Material.java --- diffuse texture + normal map loading and sampling
+\item
+  MTL.java --- .mtl file parser (map\_Kd and map\_Bump)
+\item
+  BlinnPhongMaterial.java --- ka, kd, ks, shininess, transparency,
+  reflectivity, IOR
+\item
+  TypicalMaterials.java --- presets: GOLD, SILVER, GLASS, DIAMOND,
+  STONE, etc.
+\end{itemize}
+
+\subsubsection{\texorpdfstring{\textbf{Lighting}}{Lighting}}\label{lighting}
+
+\begin{itemize}
+\item
+  Light.java --- abstract base
+\item
+  DirectionalLight.java --- constant direction, no attenuation
+\item
+  PointLight.java --- position-based, intensity / d\^{}2 attenuation
+\end{itemize}
+
+\subsubsection{\texorpdfstring{\textbf{Rendering}}{Rendering}}\label{rendering}
+
+\begin{itemize}
+\item
+  Camera.java --- ray generation from pixel coordinates
+\item
+  Raytracer.java --- main render loop, traceRay() recursive function,
+  applyShading() with full Blinn-Phong + normal maps + reflection +
+  refraction + Fresnel
+\end{itemize}
+
+\section{FINAL RENDERS AND
+EXPLANATION}\label{final-renders-and-explanation}
+
+\textbf{RENDER 1 -- The Temple and The Legend}
+
+With the first render, I wanted to do something I like, and what this
+render aims to tell is the phrase "all games have a story, but only one
+is a legend," and that\textquotesingle s the story: the legend turned
+out to be real, and the sword rests on its pedestal, waiting to be
+discovered by the hero.
+
+\includegraphics[width=8.21574in,height=4.35938in]{./media/image9.png}
+
+\textbf{RENDER 2 -- A Good Beginning\ldots{}}
+
+We\textquotesingle ve all started something for the first time. I
+suppose almost everyone here knows Minecraft, and this render tries to
+convey the feeling of starting something for the first time and having
+everything go well (Steve just started and already has diamonds).
+
+Which doesn\textquotesingle t mean it will be perfect later on
+(represented by Herobrine in the mirror\textquotesingle s reflection).
+
+\includegraphics[width=7.95022in,height=4.19271in]{./media/image3.png}
+
+\textbf{RENDER 3 -- Knight\textquotesingle s Dream}
+
+A knight fell defeated in his greatest battle, but all is not lost. The
+knight entered a dream where an angel appeared to him. The knight asked
+for help and strength to continue. This is the scene depicted.
+
+The aim is to tell, through more fantastical objects and more saturated
+colors, the effect of a dream---a dream that will bring something good.
+
+\includegraphics[width=8.13021in,height=4.2866in]{./media/image13.png}
+
+\section{EXPLANATION OF GREATEST
+CHALLENGE}\label{explanation-of-greatest-challenge}
+
+My biggest challenge was the phong shading, it looked weird and also
+like flat shading.
+
+The problem was in the Möller--Trumbore algorithm, more specifically in
+the barycentric coordinates, I had inverted the V and U, so it scrambles
+the normals between vertices, producing incorrect interpolation that
+visually resembles flat shading or gives strange results.
+
+The fix was given by a friend, that has the same problem, and say me
+that to fix that, i only need to invert the U and V in the formula
+
+\section{SELF EVALUATION}\label{self-evaluation}
+
+\subsubsection{Ray Tracer v1.0 (10\%)}\label{ray-tracer-v1.0-10}
+
+\begin{itemize}
+\item
+  Shadows (5\%)
+\item
+  Blinn-Phong (specular \& shininess) (5\%)
+\end{itemize}
+
+\ul{In this part I would give me the 10\% because my shadows and
+Blinn-Phong are working correctly.}
+
+\subsubsection{Reflection Works (25\%)}\label{reflection-works-25}
+
+\begin{itemize}
+\item
+  Reflected objects are shown correctly (15\%)
+\item
+  It shows at least 2 bounces (10\%)
+\end{itemize}
+
+\ul{I also would give me the 25\%, also the reflections work as
+expected}
+
+\subsubsection{Refraction Works (25\%)}\label{refraction-works-25}
+
+\begin{itemize}
+\item
+  Refracted objects are shown correctly (15\%)
+\item
+  Light changes direction correctly (10\%)
+\end{itemize}
+
+\ul{I also would give me the 25\%, also the Refraction work}
+
+\subsubsection{Coding Principles (15\%)}\label{coding-principles-15}
+
+\begin{itemize}
+\item
+  Does it have unnecessary code? (1\%)
+\item
+  Does it properly use OOP? (2\%)
+\item
+  Is the code reusable? (1\%)
+\item
+  Is the code flexible? (1\%)
+\item
+  Does it have bugs? (2\%)
+\item
+  Is the code scalable? (1\%)
+\item
+  Does it have comments? (1\%)
+\item
+  Is the code a huge mess or neat? (1\%)
+\end{itemize}
+
+\ul{Here i would give me a 14\% or 13\%, because i think that my code is
+a little bit a mess, especially in the part of the creations of the
+scenes, i have a lot of code (i think that is organized, but also i
+think it can be done in a cleaner way)}
+
+\subsubsection{LaTeX Report (5\%)}\label{latex-report-5}
+
+A full report in LaTeX explaining how you created the ray tracer and
+showing at least 5 images of how your ray tracer evolved. Include the
+explanation for each of the final images.
+
+Evaluation:
+
+\begin{itemize}
+\item
+  Description of the process of the ray tracer (1.5\%)
+\item
+  Explanation of each of the final images (1.5\%)
+\item
+  Explanation of greatest challenges (1\%)
+\item
+  Self-evaluation of all points (1\%)
+\end{itemize}
+
+\ul{In this part i would give me a 5\%, because i do all the points,
+including the process of the ray tracer, i explain each of the final
+images, i explain my greatest challenges and i auto-evaluate my self}
+
+\subsubsection{3 Complex Final Renders
+(10\%)}\label{complex-final-renders-10}
+
+\begin{itemize}
+\item
+  Each render has a story (3\%)
+\item
+  Each render measures 4096 × 2160 and is PNG (2\%)
+\item
+  It contains something more than spheres or teapots (2\%)
+\item
+  It is aesthetic (3\%)
+\end{itemize}
+
+\ul{here also i give me the 10\%, my renders tell a story and also are
+4K, they also have more than spheres and teapots and in my opinion its
+aesthetic.}
+
+\textbf{CHALLENGE MODE}
+
+\ul{I think I can get 1.5\% from the challenge mode of ``Implement
+Rotation and Scale of Objects'', because I implement the scale of the
+objects.}
+
+\ul{I also would give me 5\% of the extra points, because i also
+implement the Bounding Volume Hierarchy}
+
+\ul{And i also implement the UV reader + texture and normals maps, so i
+would give me that 8\% extra}
+
+\end{document}
