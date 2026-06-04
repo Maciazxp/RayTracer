@@ -111,8 +111,15 @@ public class Raytracer {
 
         // -- SCENE 2 (MINECRAFT) OBJECTS --
         /*
-        List<Triangle> house = OBJ.read("obj/scene2/house.obj", "mtl/scene2/house.mtl", 1.0);
+        List<Triangle> house = OBJ.read("obj/scene2/house2.obj", "mtl/scene2/house.mtl", 1.0);
         scene.addMesh(house, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD);
+
+        List<Triangle> herobrine = OBJ.read("obj/scene2/herobrine.obj", "mtl/scene2/herobrine.mtl", 1.0);
+        scene.addMesh(herobrine, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD);
+
+        List<Triangle> sky = OBJ.read("obj/scene2/sky.obj", Color.GRAY, 1.0);
+        scene.addMesh(sky, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.WOOD);
+
 
         List<Triangle> diamond = OBJ.read("obj/scene2/diamond.obj", "mtl/scene2/diamond.mtl", 1.0);
         scene.addMesh(diamond, new Vector3D(0.5, 0, 1.2), 1, TypicalMaterials.DIAMOND_BLOCK);
